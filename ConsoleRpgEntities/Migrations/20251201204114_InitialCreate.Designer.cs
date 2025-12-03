@@ -4,6 +4,7 @@ using ConsoleRpgEntities.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConsoleRpgEntities.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20251201204114_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,6 +118,8 @@ namespace ConsoleRpgEntities.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EquipmentId");
+
                     b.ToTable("Players");
                 });
 
@@ -130,19 +134,12 @@ namespace ConsoleRpgEntities.Migrations
                     b.Property<int?>("ArmorId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PlayerId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("WeaponId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ArmorId");
-
-                    b.HasIndex("PlayerId")
-                        .IsUnique()
-                        .HasFilter("[PlayerId] IS NOT NULL");
 
                     b.HasIndex("WeaponId");
 
@@ -197,7 +194,7 @@ namespace ConsoleRpgEntities.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(4,2)");
+                        .HasColumnType("decimal(3,2)");
 
                     b.HasKey("Id");
 
@@ -329,23 +326,26 @@ namespace ConsoleRpgEntities.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ConsoleRpgEntities.Models.Characters.Player", b =>
+                {
+                    b.HasOne("ConsoleRpgEntities.Models.Equipments.Equipment", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentId");
+
+                    b.Navigation("Equipment");
+                });
+
             modelBuilder.Entity("ConsoleRpgEntities.Models.Equipments.Equipment", b =>
                 {
                     b.HasOne("ConsoleRpgEntities.Models.Equipments.Item", "Armor")
                         .WithMany()
                         .HasForeignKey("ArmorId");
 
-                    b.HasOne("ConsoleRpgEntities.Models.Characters.Player", "Character")
-                        .WithOne("Equipment")
-                        .HasForeignKey("ConsoleRpgEntities.Models.Equipments.Equipment", "PlayerId");
-
                     b.HasOne("ConsoleRpgEntities.Models.Equipments.Item", "Weapon")
                         .WithMany()
                         .HasForeignKey("WeaponId");
 
                     b.Navigation("Armor");
-
-                    b.Navigation("Character");
 
                     b.Navigation("Weapon");
                 });
@@ -400,9 +400,6 @@ namespace ConsoleRpgEntities.Migrations
 
             modelBuilder.Entity("ConsoleRpgEntities.Models.Characters.Player", b =>
                 {
-                    b.Navigation("Equipment")
-                        .IsRequired();
-
                     b.Navigation("Inventory")
                         .IsRequired();
                 });

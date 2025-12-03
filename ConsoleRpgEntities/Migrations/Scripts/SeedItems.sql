@@ -1,7 +1,7 @@
 ﻿-- Insert 100 items into the Item table with a variety of types, weights, values, and attributes
 INSERT INTO Items (Name, Type, Attack, Defense, Weight, Value)
 VALUES 
-    ('Excalibur', 'Weapon', 50, 0, 12.5, 1500),
+    ('Excalibur', 'Weapon', 50, 0, 2.5, 1500),
     ('Shield of Valor', 'Armor', 0, 40, 10.0, 800),
     ('Mystic Staff', 'Weapon', 30, 5, 6.0, 1200),
     ('Dragon Scale Armor', 'Armor', 0, 55, 18.0, 2000),

@@ -38,7 +38,9 @@ public class GameEngine
         {
             _outputManager.WriteLine("Choose an action:", ConsoleColor.Cyan);
             _outputManager.WriteLine("1. Attack");
-            _outputManager.WriteLine("2. Quit");
+            _outputManager.WriteLine("2. List Inventory");
+            _outputManager.WriteLine("3. List Equipment");
+            _outputManager.WriteLine("4. Quit");
 
             _outputManager.Display();
 
@@ -50,6 +52,12 @@ public class GameEngine
                     AttackCharacter();
                     break;
                 case "2":
+                    ShowInventory();
+                    break;
+                case "3":
+                    ShowEquipment();
+                    break;
+                case "4":
                     _outputManager.WriteLine("Exiting game...", ConsoleColor.Red);
                     _outputManager.Display();
                     Environment.Exit(0);
@@ -68,6 +76,16 @@ public class GameEngine
             _player.Attack(targetableGoblin);
             _player.UseAbility(_player.Abilities.First(), targetableGoblin);
         }
+    }
+
+    private void ShowInventory()
+    {
+    
+    }
+
+    private void ShowEquipment()
+    {
+
     }
 
     private void SetupGame()
