@@ -2,6 +2,7 @@
 using ConsoleRpgEntities.Models.Characters;
 using ConsoleRpgEntities.Models.Characters.Monsters;
 using ConsoleRpgEntities.Models.Equipments;
+using ConsoleRpgEntities.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleRpgEntities.Data
@@ -13,6 +14,9 @@ namespace ConsoleRpgEntities.Data
         public DbSet<Ability> Abilities { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
 
         public GameContext(DbContextOptions<GameContext> options) : base(options)
         {
