@@ -9,10 +9,16 @@ public class Item
     public int Id { get; set; }
     public string Name { get; set; }
     public string Type { get; set; }
+
     public int Attack { get; set; }
     public int Defense { get; set; }
 
-    [Column(TypeName = "decimal(3, 2)")]
+    [ForeignKey(nameof(Inventory))]
+    public int InventoryId { get; set; }
+
+    // TODO: Update assignment template decimal sizing for the provided seed data
+    // Any seed data that landed on a .0 is automatically inserted as .00 so 3 is inadequate
+    [Column(TypeName = "decimal(4, 2)")]
     public decimal Weight { get; set; }
 
     public int Value { get; set; }

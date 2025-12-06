@@ -4,6 +4,10 @@ VALUES
     (1, 'Sir Lancelot', 100, 0);
 SET IDENTITY_INSERT Players OFF;
 
+SET IDENTITY_INSERT Inventory ON;
+INSERT INTO Inventory (Id, PlayerId) VALUES (1, 1);
+SET IDENTITY_INSERT Inventory OFF;
+
 SET IDENTITY_INSERT Monsters ON;
 INSERT INTO Monsters (Id, Name, MonsterType, Health, AggressionLevel, Sneakiness)
 VALUES

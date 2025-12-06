@@ -23,22 +23,33 @@ namespace ConsoleRpgEntities.Models.Characters
         public void Attack(ITargetable target)
         {
             // Player-specific attack logic
+            // At some point with no changes to the model or combat logic this method began breaking and citing a null value
+            // but no values at all were null.  I suspect it was something database side but can't confirm.
             Console.WriteLine($"{Name} attacks {target.Name} with a {Equipment.Weapon.Name} dealing {Equipment.Weapon.Attack} damage!");
             target.Health -= Equipment.Weapon.Attack;
-            System.Console.WriteLine($"{target.Name} has {target.Health} health remaining.");
-
         }
-
+        // Had to fix abilities and health as they were disfunctional in the provided template.
+        // There's a recurring theme of having to fix these templates before being able to do any of the assigned work.
         public void UseAbility(IAbility ability, ITargetable target)
         {
             if (Abilities.Contains(ability))
             {
                 ability.Activate(this, target);
+
+                if (ability is ShoveAbility shoveAbility)
+                {
+                    target.Health -= shoveAbility.Damage;
+                }
             }
             else
             {
                 Console.WriteLine($"{Name} does not have the ability {ability.Name}!");
             }
+        }
+
+        public void LootItem(Item loot)
+        {
+            Inventory.Items.Add(loot);
         }
     }
 }

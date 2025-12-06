@@ -4,6 +4,7 @@ using ConsoleRpgEntities.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConsoleRpgEntities.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20251201204114_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,10 +179,7 @@ namespace ConsoleRpgEntities.Migrations
                     b.Property<int>("Defense")
                         .HasColumnType("int");
 
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InventoryId")
+                    b.Property<int?>("InventoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -195,7 +194,7 @@ namespace ConsoleRpgEntities.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(4,2)");
+                        .HasColumnType("decimal(3,2)");
 
                     b.HasKey("Id");
 
@@ -366,9 +365,7 @@ namespace ConsoleRpgEntities.Migrations
                 {
                     b.HasOne("ConsoleRpgEntities.Models.Equipments.Inventory", null)
                         .WithMany("Items")
-                        .HasForeignKey("InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InventoryId");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>
