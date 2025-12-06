@@ -41,7 +41,8 @@ public class GameEngine
             _outputManager.WriteLine("2. List Inventory");
             _outputManager.WriteLine("3. List Equipment");
             _outputManager.WriteLine("4. Search Inventory");
-            _outputManager.WriteLine("5. Quit");
+            _outputManager.WriteLine("5. Equip Item");
+            _outputManager.WriteLine("6. Quit");
 
             _outputManager.Display();
 
@@ -50,18 +51,21 @@ public class GameEngine
             switch (input)
             {
                 case "1":
-                    Attack();
+                    Attack(); // See notes at time of call.  Had issues with the Equipment relationships late in the cycle.
                     break;
                 case "2":
-                    ShowInventory();
+                    ShowInventory(); // Functional at time of submission
                     break;
                 case "3":
-                    ShowEquipment();
+                    ShowEquipment(); // Speculative pseudocoding
                     break;
                 case "4":
-                    SearchInventory();
+                    SearchInventory(); // Functional at time of submission
                     break;
                 case "5":
+                    EquipItem(); // Speculative pseudocoding
+                    break;
+                case "6":
                     _outputManager.WriteLine("Exiting game...", ConsoleColor.Red);
                     _outputManager.Display();
                     Environment.Exit(0);
@@ -75,19 +79,21 @@ public class GameEngine
 
     private void Attack()
     {
-        // _context.Entry(_goblin).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        // Added a check for the goblin's health since the template wasn't using the abilities appropriately
+        //  and in a normal game something as trivial as a goblin would likely need to be able to respawn.
+        // I probably would've chosen a different route for handling HP in a brand new project.
         if (_goblin is ITargetable targetableGoblin && targetableGoblin.Health > 0)
         {
             // At one point an issue started popping up with regard to the provided Equipment to Items relationship
             // and I'm no longer able to run the Attack simulation or query the equipment.
 
-            // This suddenly occurred with what felt like no changes to any of the logic at all.
+            // This suddenly occurred with what felt like no changes to any of the logic at all (probably some migrational issue somewhere).
 
             // It worked consistently until I returned from a grocery shopping trip and now the actual
             // Weapon object on the Equipment model isn't returning the Sword from the items table anymore.
 
             // Before the sudden breakage the goblin was dropping loot perfectly fine and that's what's in the inventory on the DB now.
-            // You can see the logic I was working on testing with Equipment when this blockage occurred.
+            // I pseudocoded what I could once I couldn't resolve my surprise issue.
             _player.Attack(targetableGoblin);
             _player.UseAbility(_player.Abilities.First(), targetableGoblin);
             _outputManager.WriteLine($"{targetableGoblin.Name} has {targetableGoblin.Health} health remaining.");
@@ -99,6 +105,9 @@ public class GameEngine
                 _player.LootItem(loot);
 
                 // Prevent actually killing this goblin as the assignment is based around inventory and equipment
+                // This was working great until the Equipment relationship broke.
+                // I can't troubleshoot it without losing all the items in my character's inventory and risking
+                // not having that done either :(
                 _context.Entry(_goblin).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
                 _context.SaveChanges();
                 _context.Entry(_goblin).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
@@ -188,6 +197,7 @@ public class GameEngine
         } while (searching.Equals("y"));
     }
 
+
     private void ShowEquipment()
     {
         // There's some additional lore above as to why this isn't running.
@@ -195,21 +205,58 @@ public class GameEngine
         // Sudden breakage to the _player.Equipment -> Items table relationship without any apparent
         // code changes has me stopping here.
 
-        // I get frustrated enough at other little things in these templates so I"m choosing this as a natural stopping point.
+        // Any Equipment based code is the pseudocode I wrote to indicate how I would have approached this had I not
+        // run into a sudden relationship breakage that's just not going to be resolved on time.
 
-        // I don't know if something snuck it's way or it was something else but whatever.
-
-        // I would never want to show a recruiter any of what we did in this class and that makes focusing on it harder.
+        // I haven't gotten to test it because of the null data issue with the relationship.
         var weapon = _player.Equipment.Weapon;
         var armor = _player.Equipment.Armor;
 
+        Console.WriteLine("__________");
         Console.WriteLine($"Weapon: {weapon.Name ?? "Unequipped"}");
         Console.WriteLine($"Armor: {armor.Name ?? "Unequipped"}");
+        Console.WriteLine($"Player attack: {weapon.Attack + armor.Attack}");
+        Console.WriteLine($"Player defense: {weapon.Defense + armor.Defense}");
+        Console.WriteLine($"Player weight: {weapon.Weight + armor.Weight}");
+        Console.WriteLine($"Player gear value: {weapon.Value + armor.Value}");
+        Console.WriteLine("__________\n");
     }
 
     private void EquipItem()
     {
-        // Currentlly broken due to the faulty and ridiculous relationship forced onto us by the assignment template
+        // I haven't gotten to test it because of the null data issue with the relationship.
+        // This is basically just a pseudocoded method of how I would've liked to start going about this.
+        // I'd rather get some hand coding practice in than keep troubleshooting the database relationship issue.
+        var availableItems = _context.Items.Where(item => item.InventoryId == _player.Inventory.Id);
+
+        Console.WriteLine("1. Equip Weapon");
+        Console.WriteLine("2. Equip Armour");
+
+        var response = Console.ReadLine();
+
+        switch (response)
+        {
+            case "1": availableItems = availableItems.Where(item => item.Type.Equals("Weapon")); break;
+            case "2": availableItems = availableItems.Where(item => item.Type.Equals("Armor")); break;
+        }
+
+        Console.WriteLine("__________");
+        foreach (Item item in availableItems.ToList())
+        {
+            Console.WriteLine($"{item.Id}");
+            Console.WriteLine($"{item.Name}");
+            Console.WriteLine($"{item.Type}");
+            Console.WriteLine($"Attack: {item.Attack}");
+            Console.WriteLine($"Defense: {item.Defense}");
+            Console.WriteLine($"Weight: {item.Weight}");
+            Console.WriteLine($"Value: {item.Value}");
+            Console.WriteLine("__________\n");
+        }
+
+        Console.WriteLine("Enter the ID for the item you'd like to equip: ");
+        response = Console.ReadLine();
+
+        // Pausing here since I can't currently troubleshoot or test
     }
 
     private void SetupGame()
@@ -228,10 +275,6 @@ public class GameEngine
     private void LoadMonsters()
     {
         _goblin = _context.Monsters.OfType<Goblin>().FirstOrDefault();
-        // Avoid updating the Goblin's health in teh database, realistically it should have a second field
-        // that indicates it's current health vs it's total health.
-        // Monsters tend to respawn in games.
-        _context.Entry(_goblin).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
     }
 
 }

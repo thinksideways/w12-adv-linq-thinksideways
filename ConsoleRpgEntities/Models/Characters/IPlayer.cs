@@ -16,6 +16,4 @@ public interface IPlayer
     void Attack(ITargetable target);
     void LootItem(Item target);
     void UseAbility(IAbility ability, ITargetable target);
-
-
 }
