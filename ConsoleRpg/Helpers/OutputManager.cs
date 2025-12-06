@@ -1,14 +1,12 @@
 namespace ConsoleRpg.Helpers;
 
-// This file caused major headaches with handling basic user interactions.
+// This file caused some headaches with handling basic user interactions.
+// There are bugs with the WriteLine and Display when followed by Readline statements in more complex control flow situations.
 
-// There are bugs with the WriteLine and Display when followed by Readlines in more complex control flow situations.
+// I had to switch to a regular Console object WriteLine method when the Display() method wouldn't show the buffer contentds
+// followed by a Console.ReadLine statement.
 
-// Most of these templates haven't worked well for me out of the box and they always require so much troubleshooting
-// before I can even run them and start the assigned tasks.
-
-// I don't know if it's from being a VS Code user on an M4 Mac or if these are all just as untested as they seem.
-
+// I don't know if it's from being a VS Code user on an M4 Mac or some other issue.
 public class OutputManager
 {
     private readonly List<(string message, ConsoleColor color)> _outputBuffer; // A list of messages with associated colors
